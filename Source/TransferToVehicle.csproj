@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <AssemblyTitle>TransferToVehicle</AssemblyTitle>
+        <Copyright>Copyright © Dmitry "Azzkiy" 2024</Copyright>
+        <LangVersion>latest</LangVersion>
+        <OutputPath>..\Assemblies\</OutputPath>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <Nullable>enable</Nullable>
+        <WarningLevel>5</WarningLevel>
+    </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+        <DebugType>portable</DebugType>
+        <Optimize>false</Optimize>
+        <DebugSymbols>true</DebugSymbols>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+        <DebugType>none</DebugType>
+        <Optimize>true</Optimize>
+        <DebugSymbols>false</DebugSymbols>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.*" />
+        <PackageReference Include="Lib.Harmony" Version="2.3.*" />
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="VehicleFramework">
+            <HintPath>.\refs\VehicleFramework.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="SmashTools">
+            <HintPath>.\refs\SmashTools.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+ </Project>
