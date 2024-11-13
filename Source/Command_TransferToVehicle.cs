@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using RimWorld;
 using SmashTools;
 using UnityEngine;
@@ -15,6 +15,7 @@ internal class Command_TransferToVehicle : Command_Target
         defaultLabel = "Transfer to vehicle";
         defaultDesc = "Transfer to vehicle.";
         icon = ContentFinder<Texture2D>.Get("UI/Gizmos/StartLoadVehicle");
+        Order = 1000f;
         action = Action;
         targetingParams = TargetingParameters.ForPawns();
         targetingParams.validator = IsVehicle;
