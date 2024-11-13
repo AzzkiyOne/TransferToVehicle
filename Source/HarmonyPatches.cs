@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using Verse;
 
@@ -12,9 +11,14 @@ internal static class HarmonyPatch_Thing_GetGizmos
     {
         if (__instance.def.EverHaulable)
         {
-            return __result.Append(Command_TransferToVehicle.Instance);
+            yield return Command_TransferToVehicle.Instance;
         }
 
-        return __result;
+        IEnumerator<Gizmo> enumerator = __result.GetEnumerator();
+
+        while (enumerator.MoveNext())
+        {
+            yield return enumerator.Current;
+        }
     }
 }
