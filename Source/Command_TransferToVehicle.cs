@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using RimWorld;
+﻿using RimWorld;
 using SmashTools;
 using UnityEngine;
 using Vehicles;
@@ -28,23 +27,24 @@ internal class Command_TransferToVehicle : Command_Target
     {
         return target.Thing is VehiclePawn;
     }
-    // Same thing that Vehicles.Dialog_LoadCargo does.
+    // Same thing that Vehicles.Dialog_LoadCargo does,
+    // but with ability to add more things to the list while loading is in progress.
     private void Action(LocalTargetInfo target)
     {
         if (target.Thing is VehiclePawn vehicle)
         {
-            var cargoToTransfer = new List<TransferableOneWay>();
+            vehicle.cargoToLoad ??= [];
 
             foreach (var obj in Find.Selector.SelectedObjects)
             {
                 if (obj is Thing thing && thing.def.EverHaulable)
                 {
-                    var transferableOneWay = TransferableUtility.TransferableMatching(thing, cargoToTransfer, TransferAsOneMode.PodsOrCaravanPacking);
+                    var transferableOneWay = TransferableUtility.TransferableMatching(thing, vehicle.cargoToLoad, TransferAsOneMode.PodsOrCaravanPacking);
 
                     if (transferableOneWay == null)
                     {
                         transferableOneWay = new TransferableOneWay();
-                        cargoToTransfer.Add(transferableOneWay);
+                        vehicle.cargoToLoad.Add(transferableOneWay);
                     }
 
                     if (transferableOneWay.things.Contains(thing) == false)
@@ -55,7 +55,6 @@ internal class Command_TransferToVehicle : Command_Target
                 }
             }
 
-            vehicle.cargoToLoad = cargoToTransfer;
             vehicle.Map.GetCachedMapComponent<VehicleReservationManager>().RegisterLister(vehicle, ReservationType.LoadVehicle);
         }
     }
