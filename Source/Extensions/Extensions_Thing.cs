@@ -11,7 +11,20 @@ internal static class Extensions_Thing
 {
     public static bool CanBeTransferredToVehiclesCargo(this Thing thing)
     {
-        return thing.def.EverHaulable;
+        return
+            thing.def.EverHaulable
+            ||
+            (
+                thing is Pawn pawn
+                &&
+                pawn is not VehiclePawn
+                &&
+                (
+                    pawn.Faction?.IsPlayer == true
+                    ||
+                    pawn.Downed
+                )
+            );
     }
     public static IEnumerable<VehiclePawn> GetVehiclesToBeTransferredTo(this Thing thing)
     {
