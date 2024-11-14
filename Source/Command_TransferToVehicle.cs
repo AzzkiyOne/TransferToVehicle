@@ -1,6 +1,5 @@
-﻿using RimWorld;
-using SmashTools;
-using UnityEngine;
+﻿using System.Collections.Generic;
+using RimWorld;
 using Vehicles;
 using Verse;
 
@@ -12,8 +11,8 @@ internal class Command_TransferToVehicle : Command_Target
     public Command_TransferToVehicle()
     {
         defaultLabel = "Transfer to vehicle";
-        defaultDesc = "Transfer to vehicle.";
-        icon = ContentFinder<Texture2D>.Get("UI/Gizmos/StartLoadVehicle");
+        defaultDesc = "Transfer selected things to the target vehicle's cargo.";
+        icon = VehicleTex.PackCargoIcon[(uint)VehicleType.Land];
         Order = 1000f;
         action = Action;
         targetingParams = TargetingParameters.ForPawns();
@@ -23,39 +22,25 @@ internal class Command_TransferToVehicle : Command_Target
     {
         Instance = new Command_TransferToVehicle();
     }
-    private bool IsVehicle(TargetInfo target)
+    private static bool IsVehicle(TargetInfo target)
     {
         return target.Thing is VehiclePawn;
     }
-    // Same thing that Vehicles.Dialog_LoadCargo does,
-    // but with ability to add more things to the list while loading is in progress.
-    private void Action(LocalTargetInfo target)
+    private static IEnumerable<Thing> GetSelectedTransferableThings()
+    {
+        foreach (var obj in Find.Selector.SelectedObjects)
+        {
+            if (obj is Thing thing && thing.CanBeTransferredToVehiclesCargo())
+            {
+                yield return thing;
+            }
+        }
+    }
+    private static void Action(LocalTargetInfo target)
     {
         if (target.Thing is VehiclePawn vehicle)
         {
-            vehicle.cargoToLoad ??= [];
-
-            foreach (var obj in Find.Selector.SelectedObjects)
-            {
-                if (obj is Thing thing && thing.def.EverHaulable)
-                {
-                    var transferableOneWay = TransferableUtility.TransferableMatching(thing, vehicle.cargoToLoad, TransferAsOneMode.PodsOrCaravanPacking);
-
-                    if (transferableOneWay == null)
-                    {
-                        transferableOneWay = new TransferableOneWay();
-                        vehicle.cargoToLoad.Add(transferableOneWay);
-                    }
-
-                    if (transferableOneWay.things.Contains(thing) == false)
-                    {
-                        transferableOneWay.things.Add(thing);
-                        transferableOneWay.AdjustTo(transferableOneWay.CountToTransfer + thing.stackCount);
-                    }
-                }
-            }
-
-            vehicle.Map.GetCachedMapComponent<VehicleReservationManager>().RegisterLister(vehicle, ReservationType.LoadVehicle);
+            GetSelectedTransferableThings().TransferToVehicle(vehicle);
         }
     }
 }
