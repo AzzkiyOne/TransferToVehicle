@@ -5,10 +5,10 @@ using Verse;
 
 namespace TransferToVehicle;
 
-internal class Command_TransferToVehicle : Command_Target
+internal class Command_TransferToVehicle_Order : Command_Target
 {
-    public static Command_TransferToVehicle Instance { get; }
-    public Command_TransferToVehicle()
+    public static Command_TransferToVehicle_Order Instance { get; }
+    public Command_TransferToVehicle_Order()
     {
         defaultLabel = "Transfer to vehicle";
         defaultDesc = "Transfer selected things to the target vehicle's cargo.";
@@ -18,15 +18,15 @@ internal class Command_TransferToVehicle : Command_Target
         targetingParams = TargetingParameters.ForPawns();
         targetingParams.validator = IsVehicle;
     }
-    static Command_TransferToVehicle()
+    static Command_TransferToVehicle_Order()
     {
-        Instance = new Command_TransferToVehicle();
+        Instance = new Command_TransferToVehicle_Order();
     }
     private static bool IsVehicle(TargetInfo target)
     {
         return target.Thing is VehiclePawn;
     }
-    private static IEnumerable<Thing> GetSelectedTransferableThings()
+    public static IEnumerable<Thing> GetSelectedTransferableThings()
     {
         foreach (var obj in Find.Selector.SelectedObjects)
         {

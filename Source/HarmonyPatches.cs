@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
-using Vehicles;
 using Verse;
 
 namespace TransferToVehicle;
@@ -19,18 +18,11 @@ internal static class HarmonyPatch_Thing_GetGizmos
 
         if (__instance.CanBeTransferredToVehiclesCargo())
         {
-            yield return Command_TransferToVehicle.Instance;
+            yield return Command_TransferToVehicle_Order.Instance;
 
             if (__instance.IsOrderedToBeTransferredToAnyVehicle())
             {
-                yield return new Command_Action()
-                {
-                    defaultLabel = "Cancel transfer",
-                    defaultDesc = "Cancel transfer of selected things to any vehicle's cargo.",
-                    icon = VehicleTex.CancelPackCargoIcon[(uint)VehicleType.Land],
-                    Order = 1001f,
-                    action = __instance.CancelTransferToAnyVehicle,
-                };
+                yield return Command_TransferToVehicle_Cancel.Instance;
             }
         }
     }
